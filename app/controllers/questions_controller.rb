@@ -5,9 +5,10 @@ class QuestionsController < ApplicationController
   def index
     @questions = Question.all
 
-    render json: @questions
+    render json: @questions, include: [:answer]
   end
 
+    render json: @products, include: [:category], except: [:category_id]
   # GET /questions/1
   def show
     render json: @question
@@ -15,7 +16,11 @@ class QuestionsController < ApplicationController
 
   # POST /questions
   def create
-    @question = Question.new(question_params)
+    user = User.find_or_create_by(id: 1, email: 'a@rippling.com')
+    new_params = question_params.to_h
+    new_params['user'] = user
+
+    @question = Question.new(new_params)
 
     if @question.save
       render json: @question, status: :created, location: @question

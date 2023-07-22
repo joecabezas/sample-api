@@ -5,7 +5,7 @@ class AnswersController < ApplicationController
   def index
     @answers = Answer.all
 
-    render json: @answers
+    render json: @answers, include: [:vote]
   end
 
   # GET /answers/1
@@ -15,7 +15,11 @@ class AnswersController < ApplicationController
 
   # POST /answers
   def create
-    @answer = Answer.new(answer_params)
+    user = User.find_or_create_by(id: 1, email: 'a@rippling.com')
+    new_params = answer_params.to_h
+    new_params['user'] = user
+
+    @answer = Answer.new(new_params)
 
     if @answer.save
       render json: @answer, status: :created, location: @answer

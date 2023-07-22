@@ -15,7 +15,11 @@ class VotesController < ApplicationController
 
   # POST /votes
   def create
-    @vote = Vote.new(vote_params)
+    user = User.find_or_create_by(id: 1, email: 'a@rippling.com')
+    new_params = vote_params.to_h
+    new_params['user'] = user
+
+    @vote = Vote.new(new_params)
 
     if @vote.save
       render json: @vote, status: :created, location: @vote
